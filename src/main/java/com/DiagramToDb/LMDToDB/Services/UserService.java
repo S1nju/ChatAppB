@@ -1,6 +1,7 @@
 package com.DiagramToDb.LMDToDB.Services;
 
 import com.DiagramToDb.LMDToDB.Model.Dto.UserDto;
+import com.DiagramToDb.LMDToDB.Model.Entity.Status;
 import com.DiagramToDb.LMDToDB.Model.Entity.UserEntity;
 import com.DiagramToDb.LMDToDB.Repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -33,7 +36,10 @@ if(user.getUsername().isEmpty() || user.getPassword().isEmpty()|| user.getEmail(
     return ResponseEntity.ok("failed to create user");  
 }
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setStatus(Status.ONLINE);
+        user.setId(UUID.randomUUID().toString());
         userRepo.save(UserEntity.toEntity(user));
+
         return ResponseEntity.ok(jwtService.generateToken(user.getUsername()));
     }
     public ResponseEntity<?> getcurrentuser(){
@@ -63,6 +69,7 @@ if(user.getUsername().isEmpty() || user.getPassword().isEmpty()|| user.getEmail(
 if(user.getUsername()!=null) {
     Authentication authenticationManager = manager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
     if (authenticationManager.isAuthenticated()) {
+
         return ResponseEntity.ok(jwtService.generateToken(user.getUsername()));
     }
 } else if(user.getEmail()!=null) {
@@ -103,4 +110,28 @@ if(user.getUsername()!=null) {
         userRepo.deleteById(Id);
         return ResponseEntity.ok("Succces");
     }
+    public List<UserEntity> findActiveUsers(){
+        return userRepo.findAllByStatus(Status.ONLINE);
+    }
+    public void disconnect(UserDto user){
+        user.setStatus(Status.OFFLINE);
+        var storeduser = userRepo.findByUsername(user.getUsername());
+        if(storeduser!=null){
+            storeduser.setStatus(Status.OFFLINE);
+        userRepo.save(storeduser);}
+
+    }
+    public UserDto connect(UserDto user){
+        user.setStatus(Status.ONLINE);
+        var storeduser = userRepo.findByUsername(user.getUsername());
+        if(storeduser!=null){
+            storeduser.setStatus(Status.OFFLINE);
+            userRepo.save(storeduser);
+        return user;
+        }
+        return null;
+
+    }
+
 }
+

@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req->{
                     req
                             .requestMatchers("/api/auth/**").permitAll()
+
                             .requestMatchers("/api/auth/login","/api/auth/register","/api/auth/user","/swagger-ui/**","/swagger-ui.html").permitAll()
                             .requestMatchers("/api/user/users").hasAuthority("ADMIN")
 //                            .requestMatchers("/api/user/makeadmin").hasAuthority("ADMIN")
@@ -43,10 +44,12 @@ public class SecurityConfig {
                             .requestMatchers("/api/user/delete").hasAuthority("ADMIN")
                             .requestMatchers("/api/user/create").hasAuthority("ADMIN")
                             .requestMatchers("/api/user/user").hasAuthority("ADMIN")
-
+                            .requestMatchers("/ws/**").permitAll()
                             .anyRequest().authenticated();
 
-                }).cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                })
+
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session->{
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -58,7 +61,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://ertodb-frontend-w5eg.vercel.app")); // Allow specific origin
+        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // Allow specific origin
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Allow HTTP methods
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type","")); // Allow headers
         configuration.setAllowCredentials(true); // Allow credentials (cookies, etc.)

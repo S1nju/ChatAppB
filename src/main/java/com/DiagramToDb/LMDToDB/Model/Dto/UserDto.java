@@ -1,5 +1,6 @@
 package com.DiagramToDb.LMDToDB.Model.Dto;
 
+import com.DiagramToDb.LMDToDB.Model.Entity.Status;
 import com.DiagramToDb.LMDToDB.Model.Entity.UserEntity;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -13,10 +14,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {
-    private Long id;
+    private String id;
     @NotNull(message ="username is required")
     @Pattern(regexp = "^(?=[a-zA-Z0-9._]{4,20}$)(?!.*[_.]{2})[^_.].*[^_.]$", message="Invalid Username Given")
     private String username;
+    private Status status;
     @NotNull(message ="Passowrd is required")
     @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", message="Password Must Contains:\n" +
             "At least one upper case English letter,\n" +
@@ -33,6 +35,7 @@ public class UserDto {
         return UserDto.builder()
                 .id(u.getId())
                 .username(u.getUsername())
+                .status(u.getStatus())
                 .password(u.getPassword())
                 .email(u.getEmail())
                 .build();
