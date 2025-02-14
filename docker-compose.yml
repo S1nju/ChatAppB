@@ -7,4 +7,4 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - SPRING_DATA_MONGODB_URI=mongodb+srv://aminebouhaik527:PptvPEwfcUi97KCG@cluster0.hust6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0/ChatApp?retryWrites=true&w=majority
+      - SPRING_DATA_MONGODB_URI=mongodb+srv://aminebouhaik527:PptvPEwfcUi97KCG@cluster0.hust6.mongodb.net/ChatApp?retryWrites=true&w=majority&appName=Cluster0/
